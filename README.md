@@ -7,4 +7,4 @@
 ||简介|
 |:--|:--|
 |cloud|后端，基于spring boot实现，spring security + nacos + dubbo|
-|clent|前端，ant design|
+|client|前端，ant design|
