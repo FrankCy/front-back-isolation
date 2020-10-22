@@ -1,0 +1,141 @@
+spring:
+  profiles:
+    active: dev-server
+  # 应用程序
+  application:
+    # 应用程序名称
+    name: cloud-service
+server:
+  port: 8081
+
+# 日志配置
+logging:
+  config: classpath:log4j2.xml
+  level:
+    root: debug
+    web: info
+    com:
+      alibaba:
+        nacos:
+          client:
+            naming: error
+    org.springframework.security:
+      - debug
+      - info
+    org.springframework.web: debug
+    #org.hibernate.SQL: debug
+    org.hibernate.engine.QueryParameters: debug
+    org.hibernate.engine.query.HQLQueryPlan: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    com.gdfs.spider.dao.repository: debug
+
+---
+spring:
+  # 环境区分
+  profiles: dev-server
+  # 微服务
+  cloud:
+    # 服务注册/配置管理
+    nacos:
+      # 配置管理
+      config:
+        # 服务器地址（注册服务的地址）
+        server-addr: ${nacos.service-address}:${nacos.port}
+        # 命名空间
+        namespace: dev-server
+        # 文件扩展名
+        file-extension: yaml
+        # 扩展配置
+        extension-configs[0]:
+          # 对应配置文件的标记（daat-id）
+          data-id: ${spring.application.name}-${spring.profiles}.yaml
+          # 是否支持全局刷新
+          refresh: true
+      # 服务发现配置（暴露cloud服务使用）
+      discovery:
+        # 是否生效
+        enable: true
+        # 注册是否启用
+        register-enabled: true
+        # 服务发现使用的注册中心
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        # 命名空间
+        namespace: dev-server
+        group: dev-server
+  datasource:
+    name: cloud
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #监控统计拦截的filters
+      filters: stat
+      driver-class-name: com.mysql.jdbc.Driver
+      #配置初始化大小/最小/最大
+      initial-size: 10
+      min-idle: 10
+      max-active: 100
+      #获取连接等待超时时间
+      max-wait: 60000
+      #间隔多久进行一次检测，检测需要关闭的空闲连接
+      time-between-eviction-runs-millis: 60000
+      #一个连接在池中最小生存的时间
+      min-evictable-idle-time-millis: 300000
+      # 验证数据库连接的查询语句
+      validation-query: SELECT 'x'
+      # 是否要测试
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+      #基本属性
+      url: jdbc:mysql://127.0.0.1:3306/fbi-db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&useOldAliasMetadataBehavior=true&serverTimezone=CTT
+      username: root
+      password: root
+      filter:
+        config:
+          enabled: true
+  # JPA相关配置
+  jpa:
+    # 控制台显示sql
+    show-sql: true
+    # 设置实体映射数据表功能开关
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect #设置数据库方言
+  data:
+    mongodb:
+# Dubbo Application  nacos
+## The default value of dubbo.application.name is ${spring.application.name}
+## dubbo.application.name=${spring.application.name}
+# nacos配置
+nacos:
+  # 服务器地址
+  service-address: localhost
+  # 端口
+  port: 8848
+# 服务
+dubbo:
+  # 注册
+  registry:
+    # 注册dubbo服务地址以及命名空间
+    address: nacos://${nacos.service-address}:${nacos.port}?namespace=dev-server
+  # 协议
+  protocol:
+    # dubbo
+    name: dubbo
+    # 端口
+    port: 20883
+  # 扫描
+  scan:
+    # 扫描的服务实现
+    base-packages: com.ec.cloud.*.service.user.impl
+  # 提供者的配置
+  provider:
+    # 超时时间50000
+    timeout: 10000
+    # 重试次数 0
+    retries: 0
