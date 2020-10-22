@@ -1,8 +1,8 @@
 package com.bi.cloud.web.config;
 
 import com.alibaba.fastjson.JSON;
-import com.jtmm.cicd.api.utils.HttpStatusEnum;
-import com.jtmm.cicd.api.utils.Result;
+import com.fbi.cloud.api.util.HttpStatusEnum;
+import com.fbi.cloud.api.util.Result;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
